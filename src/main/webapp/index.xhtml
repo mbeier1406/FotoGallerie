@@ -6,10 +6,11 @@
       xmlns:p="http://primefaces.org/ui">
 
     <f:view contentType="text/html">
+
         <h:head>
             <f:facet name="first">
                 <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
-                <title>Gallery</title>
+                <title>Fotogallerie</title>
             </f:facet>  
             <style>
                 body {
@@ -97,7 +98,7 @@
                       modal="true"
                       resizable="false"
                       width="850" height="500">
-                <h:form>                         
+                <h:form>
                     <p:fileUpload id="uploadFileId" 
                                   fileUploadListener="#{galleryBean.handleFileUpload}" 
                                   mode="advanced" multiple="true"                              
@@ -112,5 +113,6 @@
         </h:body>
 
     </f:view>
+
 </html>
 
