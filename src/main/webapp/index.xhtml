@@ -36,16 +36,16 @@
 
                 <p:layoutUnit position="center">
                     <p:panelGrid columns="2">
-                        <h:outputText value="Photos"/>
+                        <h:outputText value="Fotos" style="font-size: 20px"/>
                         <p:ajaxStatus>
                             <f:facet name="default">
-                                <h:outputText value="Gallery" />
+                                <h:outputText value="Gallerie" style="font-size: 20px" />
                             </f:facet>
                             <f:facet name="start">
                                <p:graphicImage name="icons/ajax-loader.gif" height="10" />
                             </f:facet>
                             <f:facet name="complete">
-                                <h:outputText value="Gallery" />
+                                <h:outputText value="Gallerie" style="font-size: 20px" />
                             </f:facet>
                         </p:ajaxStatus>
                         <h:form id="tableFormId">                            
@@ -55,17 +55,16 @@
                                          rows="10"
                                          paginator="true"                                      
                                          paginatorTemplate="{CurrentPageReport}  {FirstPageLink}
-                                         {PreviousPageLink} {PageLinks} {NextPageLink}
-                                         {LastPageLink} {RowsPerPageDropdown}"
+                                         	{PreviousPageLink} {PageLinks} {NextPageLink}
+                                         	{LastPageLink} {RowsPerPageDropdown}"
                                          rowsPerPageTemplate="5,10"
-                                         emptyMessage="No photos found ...">                                    
-                                <p:column headerText="Preview" style="width:50px;">
-                                    <p:graphicImage id="previewId" name="icons/preview.png" 
-                                                    style="cursor:pointer" />
+                                         emptyMessage="Keine Fotos vorhanden ...">                                    
+                                <p:column headerText="Vorschau" style="width:50px;">
+                                    <p:graphicImage id="previewId" name="icons/preview.png" style="cursor:pointer" />
                                     <p:overlayPanel id="previewPanelId" for="previewId" 
                                                     showEffect="blind" hideEffect="explode" 
                                                     showEvent="mouseover" hideEvent="mouseout"
-                                                    showCloseIcon="true">
+                                                    showCloseIcon="false">
                                         <p:graphicImage name="photos/#{t.name}" width="200" height="105"/>
                                     </p:overlayPanel>
                                 </p:column> 
@@ -76,8 +75,9 @@
                                     <h:outputText value="#{t.name}" />
                                 </p:column>
                             </p:dataTable> 
-                            <p:commandButton value="Refresh Gallery" update=":galleriaId" icon="ui-icon-refresh" />
-                            <p:commandButton type="button" process="none" value="Upload Photos" 
+                            <p:commandButton type="submit" ajax="true" value="Gallerie aktualisieren"
+                            				 update=":galleriaId" icon="ui-icon-refresh" process="@form" />
+                            <p:commandButton type="button" process="none" value="Fotos hochladen" 
                                              onclick="PF('uploadPhotosDialog').show();" icon="ui-icon-plusthick" />
                         </h:form>
                         <p:galleria id="galleriaId" 
@@ -93,7 +93,7 @@
 
             </p:layout>
 
-            <p:dialog header="Upload New Photos" 
+            <p:dialog header="Foto hinzufügen" 
                       widgetVar="uploadPhotosDialog"
                       modal="true"
                       resizable="false"
