@@ -7,11 +7,11 @@
     </context-param>
     <context-param>
         <param-name>primefaces.THEME</param-name>
-        <param-value>mint-choc</param-value>
+        <param-value>sunny</param-value>
     </context-param>
     <context-param>
         <param-name>primefaces.UPLOADER</param-name>
-        <param-value>commons</param-value>
+        <param-value>native</param-value>
     </context-param>
 
     <servlet>
@@ -28,14 +28,24 @@
         <session-timeout>30</session-timeout>
     </session-config>
 
-	<filter>
-		<filter-name>PrimeFaces FileUpload Filter</filter-name>
-		<filter-class>org.primefaces.webapp.filter.FileUploadFilter</filter-class>
-	</filter>
-	<filter-mapping>
-		<filter-name>PrimeFaces FileUpload Filter</filter-name>
-		<servlet-name>Faces Servlet</servlet-name>
-	</filter-mapping>
+ <filter>
+    <filter-name>PrimeFaces FileUpload Filter</filter-name>
+    <filter-class>org.primefaces.webapp.filter.FileUploadFilter</filter-class>
+</filter>
+<filter-mapping>
+    <filter-name>PrimeFaces FileUpload Filter</filter-name>
+    <servlet-name>Faces Servlet</servlet-name>
+    <dispatcher>FORWARD</dispatcher>
+</filter-mapping>
+
+<!-- 	<filter> -->
+<!-- 		<filter-name>PrimeFaces FileUpload Filter</filter-name> -->
+<!-- 		<filter-class>org.primefaces.webapp.filter.FileUploadFilter</filter-class> -->
+<!-- 	</filter> -->
+<!-- 	<filter-mapping> -->
+<!-- 		<filter-name>PrimeFaces FileUpload Filter</filter-name> -->
+<!-- 		<servlet-name>Faces Servlet</servlet-name> -->
+<!-- 	</filter-mapping> -->
 
     <welcome-file-list>
         <welcome-file>index.xhtml</welcome-file>

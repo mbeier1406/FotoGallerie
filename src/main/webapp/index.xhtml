@@ -3,7 +3,8 @@
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:f="http://java.sun.com/jsf/core"
       xmlns:ui="http://java.sun.com/jsf/facelets"
-      xmlns:p="http://primefaces.org/ui">
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pe="http://primefaces.org/ui/extensions">
 
     <f:view contentType="text/html">
 
@@ -24,17 +25,17 @@
 
         <h:body>
 
-            <p:layout fullPage="true">
+            <pe:layout fullPage="true">
 
-                <p:layoutUnit position="north" style="text-align:center;" size="95" resizable="false" closable="false" collapsible="false">
+                <pe:layoutPane position="north" style="text-align:center;" size="95" resizable="false" closable="false" collapsible="false">
                     <p:graphicImage name="icons/logo.png"/>
-                </p:layoutUnit>
+                </pe:layoutPane>
 
-                <p:layoutUnit position="south" style="text-align:right;" resizable="false" closable="false" collapsible="false">
+                <pe:layoutPane position="south" style="text-align:right;" resizable="false" closable="false" collapsible="false">
                     <p:graphicImage name="icons/packt.png"/>
-                </p:layoutUnit>                
+                </pe:layoutPane>                
 
-                <p:layoutUnit position="center">
+                <pe:layoutPane position="center">
                     <p:panelGrid columns="2">
                         <h:outputText value="Fotos" style="font-size: 20px"/>
                         <p:ajaxStatus>
@@ -83,15 +84,15 @@
                         <p:galleria id="galleriaId" 
                                     value="#{galleryBean.photos.stream().filter((i)->i.selected eq true).toList()}"
                                     var="t"
-                                    panelWidth="800" panelHeight="400" 
-                                    showCaption="true" 
-                                    autoPlay="false" effectSpeed="1000">     
+                                    showCaption="true"
+                                    showItemNavigators="true"
+                                    autoPlay="false" effectSpeed="1000">
                             <p:graphicImage name="photos/#{t.name}" title="#{t.name}" width="800" height="400"/>
                         </p:galleria>
                     </p:panelGrid>
-                </p:layoutUnit>
+                </pe:layoutPane>
 
-            </p:layout>
+            </pe:layout>
 
             <p:dialog header="Foto hinzufügen" 
                       widgetVar="uploadPhotosDialog"
@@ -106,11 +107,12 @@
                                   sizeLimit="2097152" fileLimit="300" 
                                   allowTypes="/(\.|\/)(gif|jpe?g|png)$/"
                                   dragDropSupport="false" /> 
-                    <p:growl id="growlId"/>
                 <ui:remove>
-                	<p:fileUpload value="#{galleryBean....}" mode="simple" />
-					<p:commandButton value="Hochladen" ajax="false"/>
+				<p:fileUpload value="#{galleryBean.file}" mode="simple" skinSimple="true" />
+				<br />
+				<p:commandButton value="Submit" ajax="false" action="#{galleryBean.upload}" disabled="false" />
                 </ui:remove>
+				<p:growl id="growlId"/>
                 </h:form>
             </p:dialog>
 
