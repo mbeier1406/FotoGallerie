@@ -10,7 +10,7 @@
 	<packaging>war</packaging>
 	<name>Primefaces</name>
 	<description>Beeispielanwendung fuer JSF/Primefaces</description>
-	<url>http://golkonda.gmxhome.de/</url>
+	<url>https://github.com/mbeier1406/</url>
 
     <repositories>
         <repository>
