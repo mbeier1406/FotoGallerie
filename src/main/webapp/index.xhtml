@@ -19,79 +19,75 @@
                 td {             
                     vertical-align: top;
                 }
+			    .align-center {
+			        text-align: center;
+			    }
             </style>
         </h:head>
 
         <h:body>
 
-            <p:layout fullPage="true">
+			<p:panelGrid columns="1" layout="grid" styleClass="align-center">
+                <p:graphicImage name="icons/logo.png" />
 
-                <p:layoutUnit position="north" style="text-align:center;" size="95" resizable="false" closable="false" collapsible="false">
-                    <p:graphicImage name="icons/logo.png"/>
-                </p:layoutUnit>
+                <p:panelGrid columns="2">
+                    <h:outputText value="Fotos" style="font-size: 20px"/>
+                    <p:ajaxStatus>
+                        <f:facet name="default">
+                            <h:outputText value="Gallerie" style="font-size: 20px" />
+                        </f:facet>
+                        <f:facet name="start">
+                           <p:graphicImage name="icons/ajax-loader.gif" height="10" />
+                        </f:facet>
+                        <f:facet name="complete">
+                            <h:outputText value="Gallerie" style="font-size: 20px" />
+                        </f:facet>
+                    </p:ajaxStatus>
+                    <h:form id="tableFormId">                            
+                        <p:dataTable id="tablePhotosId"
+                                     value="#{galleryBean.photos}"
+                                     var="t"
+                                     rows="10"
+                                     paginator="true"                                      
+                                     paginatorTemplate="{CurrentPageReport}  {FirstPageLink}
+                                     	{PreviousPageLink} {PageLinks} {NextPageLink}
+                                     	{LastPageLink} {RowsPerPageDropdown}"
+                                     rowsPerPageTemplate="5,10"
+                                     emptyMessage="Keine Fotos vorhanden ...">                                    
+                            <p:column headerText="Vorschau" style="width:50px;">
+                                <p:graphicImage id="previewId" name="icons/preview.png" style="cursor:pointer" />
+                                <p:overlayPanel id="previewPanelId" for="previewId" 
+                                                showEffect="blind" hideEffect="explode" 
+                                                showEvent="mouseover" hideEvent="mouseout"
+                                                showCloseIcon="false">
+                                    <p:graphicImage name="photos/#{t.name}" width="200" height="105"/>
+                                </p:overlayPanel>
+                            </p:column> 
+                            <p:column style="width:15px;">
+                                <h:selectBooleanCheckbox value="#{t.selected}" />
+                            </p:column>
+                            <p:column headerText="Name">
+                                <h:outputText value="#{t.name}" />
+                            </p:column>
+                        </p:dataTable> 
+                        <p:commandButton type="submit" ajax="true" value="Gallerie aktualisieren"
+                        				 update=":galleriaId" icon="ui-icon-refresh" process="@form" />
+                        <p:commandButton type="button" process="none" value="Fotos hochladen" 
+                                         onclick="PF('uploadPhotosDialog').show();" icon="ui-icon-plusthick" />
+                    </h:form>
+                    <p:galleria id="galleriaId" 
+                                value="#{galleryBean.photos.stream().filter((i)->i.selected eq true).toList()}"
+                                var="t"
+                                panelWidth="800" panelHeight="400" 
+                                showCaption="true" 
+                                autoPlay="false" effectSpeed="1000">     
+                        <p:graphicImage name="photos/#{t.name}" title="#{t.name}" width="800" height="400"/>
+                    </p:galleria>
+                </p:panelGrid>
 
-                <p:layoutUnit position="south" style="text-align:right;" resizable="false" closable="false" collapsible="false">
-                    <p:graphicImage name="icons/packt.png"/>
-                </p:layoutUnit>                
+                <p:graphicImage name="icons/packt.png"/>
 
-                <p:layoutUnit position="center">
-                    <p:panelGrid columns="2">
-                        <h:outputText value="Fotos" style="font-size: 20px"/>
-                        <p:ajaxStatus>
-                            <f:facet name="default">
-                                <h:outputText value="Gallerie" style="font-size: 20px" />
-                            </f:facet>
-                            <f:facet name="start">
-                               <p:graphicImage name="icons/ajax-loader.gif" height="10" />
-                            </f:facet>
-                            <f:facet name="complete">
-                                <h:outputText value="Gallerie" style="font-size: 20px" />
-                            </f:facet>
-                        </p:ajaxStatus>
-                        <h:form id="tableFormId">                            
-                            <p:dataTable id="tablePhotosId"
-                                         value="#{galleryBean.photos}"
-                                         var="t"
-                                         rows="10"
-                                         paginator="true"                                      
-                                         paginatorTemplate="{CurrentPageReport}  {FirstPageLink}
-                                         	{PreviousPageLink} {PageLinks} {NextPageLink}
-                                         	{LastPageLink} {RowsPerPageDropdown}"
-                                         rowsPerPageTemplate="5,10"
-                                         emptyMessage="Keine Fotos vorhanden ...">                                    
-                                <p:column headerText="Vorschau" style="width:50px;">
-                                    <p:graphicImage id="previewId" name="icons/preview.png" style="cursor:pointer" />
-                                    <p:overlayPanel id="previewPanelId" for="previewId" 
-                                                    showEffect="blind" hideEffect="explode" 
-                                                    showEvent="mouseover" hideEvent="mouseout"
-                                                    showCloseIcon="false">
-                                        <p:graphicImage name="photos/#{t.name}" width="200" height="105"/>
-                                    </p:overlayPanel>
-                                </p:column> 
-                                <p:column style="width:15px;">
-                                    <h:selectBooleanCheckbox value="#{t.selected}" />
-                                </p:column>
-                                <p:column headerText="Name">
-                                    <h:outputText value="#{t.name}" />
-                                </p:column>
-                            </p:dataTable> 
-                            <p:commandButton type="submit" ajax="true" value="Gallerie aktualisieren"
-                            				 update=":galleriaId" icon="ui-icon-refresh" process="@form" />
-                            <p:commandButton type="button" process="none" value="Fotos hochladen" 
-                                             onclick="PF('uploadPhotosDialog').show();" icon="ui-icon-plusthick" />
-                        </h:form>
-                        <p:galleria id="galleriaId" 
-                                    value="#{galleryBean.photos.stream().filter((i)->i.selected eq true).toList()}"
-                                    var="t"
-                                    panelWidth="800" panelHeight="400" 
-                                    showCaption="true" 
-                                    autoPlay="false" effectSpeed="1000">     
-                            <p:graphicImage name="photos/#{t.name}" title="#{t.name}" width="800" height="400"/>
-                        </p:galleria>
-                    </p:panelGrid>
-                </p:layoutUnit>
-
-            </p:layout>
+			</p:panelGrid>
 
             <p:dialog header="Foto hinzufügen" 
                       widgetVar="uploadPhotosDialog"

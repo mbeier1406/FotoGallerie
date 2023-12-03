@@ -57,7 +57,7 @@
         <dependency>
             <groupId>org.primefaces</groupId>
             <artifactId>primefaces</artifactId>
-            <version>5.0</version>
+            <version>6.2</version> <!-- File Upload funktioniert bei hoeheren Versionen nicht -->
         </dependency>
         <dependency>
             <groupId>org.primefaces.themes</groupId>
