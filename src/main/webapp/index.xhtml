@@ -98,7 +98,7 @@
                       modal="true"
                       resizable="false"
                       width="850" height="500">
-                <h:form>
+                <h:form id="idFormUploadFiles" enctype="multipart/form-data">
                     <p:fileUpload id="uploadFileId" 
                                   fileUploadListener="#{galleryBean.handleFileUpload}" 
                                   mode="advanced" multiple="true"                              
@@ -107,6 +107,10 @@
                                   allowTypes="/(\.|\/)(gif|jpe?g|png)$/"
                                   dragDropSupport="false" /> 
                     <p:growl id="growlId"/>
+                <ui:remove>
+                	<p:fileUpload value="#{galleryBean....}" mode="simple" />
+					<p:commandButton value="Hochladen" ajax="false"/>
+                </ui:remove>
                 </h:form>
             </p:dialog>
 
