@@ -12,14 +12,17 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.servlet.ServletContext;
+
+import org.apache.logging.log4j.CloseableThreadContext;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.primefaces.event.FileUploadEvent;
 
 /**
@@ -28,26 +31,27 @@ import org.primefaces.event.FileUploadEvent;
 @ManagedBean
 @ViewScoped
 public class GalleryBean implements Serializable {  
-    
-    private List<Photo> photos = new ArrayList<>();
+
+	private static final long serialVersionUID = 3893732715971441682L;
+	private List<Photo> photos = new ArrayList<>();
     private static final int BUFFER_SIZE = 6124;
 
-    /**
-     * Creates a new instance of MyGalleryBean
-     */
-    public GalleryBean() {      
-        
-        FacesContext facesContext = FacesContext.getCurrentInstance();
-        ExternalContext externalContext = facesContext.getExternalContext();
-        Path path = Paths.get(((ServletContext) externalContext.getContext())
+    public static final Logger LOGGER = LogManager.getLogger(GalleryBean.class);
+
+    public GalleryBean() throws IOException {      
+
+        Path path = Paths
+        		.get(((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext())
                 .getRealPath(File.separator + "resources" + File.separator + "photos"));
-        try (DirectoryStream<Path> ds = Files.newDirectoryStream(path)) {
+        try ( CloseableThreadContext.Instance ctx = CloseableThreadContext.put("path", path.toString());
+        		DirectoryStream<Path> ds = Files.newDirectoryStream(path) ) {
             for (Path file : ds) {
                 Photo photo = new Photo(file.getFileName().toString(), false);
                 photos.add(photo);
+                LOGGER.debug("photo="+photo);
             }
         } catch (IOException ex) {
-            Logger.getLogger(GalleryBean.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.error("path="+path, ex);
         }
     }
 
@@ -95,14 +99,14 @@ public class GalleryBean implements Serializable {
                 facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Files were successfully uploaded !", null));
             } catch (FileNotFoundException ex) {
                 facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "File " + event.getFile().getFileName() + " cannot be found!", null));
-                Logger.getLogger(GalleryBean.class.getName()).log(Level.SEVERE, null, ex);
+                LOGGER.error("path="+path, ex);
             } catch (IOException ex) {
                 facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "File " + event.getFile().getFileName() + " cannot be uploaded!", null));
-                Logger.getLogger(GalleryBean.class.getName()).log(Level.SEVERE, null, ex);
+                LOGGER.error("path="+path, ex);
             }
         } else {
             facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "File does not exist!", null));
-            Logger.getLogger(GalleryBean.class.getName()).log(Level.SEVERE, "File does not exist!", "File does not exist!");
+            LOGGER.error("event="+event+": Datei nicht vorhanden!");
         }
         
     }

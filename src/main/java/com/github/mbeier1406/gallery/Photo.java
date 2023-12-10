@@ -3,11 +3,12 @@ package com.github.mbeier1406.gallery;
 import java.io.Serializable;
 
 /**
- *
+ * Einfacher Container zur 
  */
 public class Photo implements Serializable {
-    
-    private String name;
+
+	private static final long serialVersionUID = 1857057374045339804L;
+	private final String name;
     private boolean selected;
 
     public Photo(String name, boolean selected) {
@@ -19,10 +20,6 @@ public class Photo implements Serializable {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public boolean isSelected() {
         return selected;
     }
@@ -30,7 +27,10 @@ public class Photo implements Serializable {
     public void setSelected(boolean selected) {
         this.selected = selected;
     }
-    
-    
-    
+
+	@Override
+	public String toString() {
+		return "Photo [name=" + name + ", selected=" + selected + "]";
+	}
+
 }
