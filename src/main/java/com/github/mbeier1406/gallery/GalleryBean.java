@@ -1,5 +1,7 @@
 package com.github.mbeier1406.gallery;
 
+import static org.apache.logging.log4j.CloseableThreadContext.put;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -26,61 +28,66 @@ import org.apache.logging.log4j.Logger;
 import org.primefaces.event.FileUploadEvent;
 
 /**
- *
+ * Die Bean der Anwendung speichert eine Liste der vorhandenen Photos, liest
+ * zum Start die vorhandencein und bietet die Möglichkeit, weitere über eine
+ * Upload-Funktion hinzuzufügen. Das Verzeichnis ist {@code /FotoGallerie/src/main/webapp/resources/photos}.
+ * Die nachträglich geladenen Photos sind also nicht Bestandteil des Deployments und werden bei
+ * jedem Update gelöscht (keine Persistierung).
+ * @author mbeier
  */
 @ManagedBean
 @ViewScoped
 public class GalleryBean implements Serializable {  
 
-	private static final long serialVersionUID = 3893732715971441682L;
-	private List<Photo> photos = new ArrayList<>();
-    private static final int BUFFER_SIZE = 6124;
-
     public static final Logger LOGGER = LogManager.getLogger(GalleryBean.class);
 
+	private static final long serialVersionUID = 3893732715971441682L;
+	private List<Photo> listOfPhotos = new ArrayList<>();
+
+	/**
+     * Liest die im Deployment vorhandenen Photos in {@linkplain #listOfPhotos} ein.
+     * @throws IOException Falls die im Ressourcenordner vorhandenen Photos nicht geladen werden können
+     * @see #getPhotoPath(ExternalContext)
+     */
     public GalleryBean() throws IOException {      
 
-        Path path = Paths
-        		.get(((ServletContext) FacesContext.getCurrentInstance().getExternalContext().getContext())
-                .getRealPath(File.separator + "resources" + File.separator + "photos"));
-        try ( CloseableThreadContext.Instance ctx = CloseableThreadContext.put("path", path.toString());
-        		DirectoryStream<Path> ds = Files.newDirectoryStream(path) ) {
-            for (Path file : ds) {
+        Path path = getPhotoPath(FacesContext.getCurrentInstance().getExternalContext());
+        try ( CloseableThreadContext.Instance ctx = put("path", path.toString());
+        	  DirectoryStream<Path> ds = Files.newDirectoryStream(path) ) {
+        	ds.forEach(file -> {
                 Photo photo = new Photo(file.getFileName().toString(), false);
-                photos.add(photo);
+                listOfPhotos.add(photo);
                 LOGGER.debug("photo="+photo);
-            }
+        	});
         } catch (IOException ex) {
             LOGGER.error("path="+path, ex);
         }
     }
 
+    /**
+     * Liefert die Liste der eingeesenen Photos.
+     * @return die Liste
+     */
     public List<Photo> getPhotos() {
-        return photos;
+        return listOfPhotos;
     }
 
-    public void setPhotos(List<Photo> photos) {
-        this.photos = photos;
-    }
-
+    /**
+     * Lädt eine Datei hoch in den Ressourcenordner der Anwendung und speichert ein
+     * enstprechendes {@linkplain Photo}-Objekt in {@linkplain #listOfPhotos}.
+     * @param event enthält die Daten zur hochzuladenden Datei
+     * @see #getPhotoPath(ExternalContext)
+     */
     public void handleFileUpload(FileUploadEvent event) {
-        
         FacesContext facesContext = FacesContext.getCurrentInstance();
-        ExternalContext externalContext = facesContext.getExternalContext();
-        
         if (event.getFile() != null) {
-        Path path = Paths.get(((ServletContext) externalContext.getContext())
-                    .getRealPath(File.separator + "resources" + File.separator + "photos" + File.separator));
-            FileOutputStream fileOutputStream;
-            InputStream inputStream;
-            try {
-                String fn = event.getFile().getFileName();
-                fileOutputStream = new FileOutputStream(path.toString() + File.separator + fn);
-
-                byte[] buffer = new byte[BUFFER_SIZE];
-
+        	Path path = getPhotoPath(facesContext.getExternalContext());
+            String fn = event.getFile().getFileName();
+            try ( CloseableThreadContext.Instance ctx = put("path", path.toString()).put("fn", fn);
+            	  FileOutputStream fileOutputStream = new FileOutputStream(path.toString() + File.separator + fn);
+            	  InputStream inputStream = event.getFile().getInputstream() ) {
+                byte[] buffer = new byte[6124];
                 int bulk;
-                inputStream = event.getFile().getInputstream();
                 while (true) {
                     bulk = inputStream.read(buffer);
                     if (bulk < 0) {
@@ -89,26 +96,31 @@ public class GalleryBean implements Serializable {
                     fileOutputStream.write(buffer, 0, bulk);
                     fileOutputStream.flush();
                 }
-
-                fileOutputStream.close();
-                inputStream.close();
-
                 Photo new_photo = new Photo(fn, false);
-                photos.add(new_photo);
-
-                facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Files were successfully uploaded !", null));
+                listOfPhotos.add(new_photo);
+                facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Dateien hochgeladen!", null));
             } catch (FileNotFoundException ex) {
-                facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "File " + event.getFile().getFileName() + " cannot be found!", null));
-                LOGGER.error("path="+path, ex);
+                facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "File " + event.getFile().getFileName() + " nicht gefunden!", null));
+                LOGGER.error("path={}; event={}", path, event, ex);
             } catch (IOException ex) {
-                facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "File " + event.getFile().getFileName() + " cannot be uploaded!", null));
-                LOGGER.error("path="+path, ex);
+                facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "File " + event.getFile().getFileName() + " nicht hochgeladen!", null));
+                LOGGER.error("path={}; event={}", path, event, ex);
             }
         } else {
-            facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "File does not exist!", null));
-            LOGGER.error("event="+event+": Datei nicht vorhanden!");
+            facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Datei existiert nicht!", null));
+            LOGGER.error("event={}", event+": Datei nicht vorhanden!");
         }
-        
     }
-    
+
+    /**
+     * Liefert zum externen Kontext das Verezichnis, in dem sich die Photos befinden.
+     * @param externalContext der externe Kontext der Anwendung ({@linkplain FacesContext#getExternalContext()})
+     * @return den Pfad im Ressourcenordner
+     */
+    public Path getPhotoPath(final ExternalContext externalContext) {
+        return Paths.get(
+        		((ServletContext) externalContext.getContext())
+                .getRealPath(File.separator + "resources" + File.separator + "photos" + File.separator));
+
+    }
 }

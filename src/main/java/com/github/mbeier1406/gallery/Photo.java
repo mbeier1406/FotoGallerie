@@ -3,7 +3,8 @@ package com.github.mbeier1406.gallery;
 import java.io.Serializable;
 
 /**
- * Einfacher Container zur 
+ * Einfacher Container zur Speicherung eines Photos, und ob es in der Galerie angezeigt werden soll.
+ * @author mbeier
  */
 public class Photo implements Serializable {
 
@@ -11,6 +12,11 @@ public class Photo implements Serializable {
 	private final String name;
     private boolean selected;
 
+    /**
+     * Erstellt das Objekt.
+     * @param name Dateiname ohne Pfadangabe
+     * @param selected <b>true</b>, wenn es in der Galerie angezeigt werden soll, sonst <b>false</b>
+     */
     public Photo(String name, boolean selected) {
         this.name = name;
         this.selected = selected;
