@@ -12,6 +12,7 @@ import javax.servlet.ServletContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -29,6 +30,9 @@ public class GalleryBeanTest {
 
     public static final Logger LOGGER = LogManager.getLogger(GalleryBean.class);
 
+    /** Der Pfad, der von {@linkplain #testeGetPhotoPath()} geliefert ist {@value} */
+    public static final String PATH = ".";
+
     @Rule
     public MockitoRule mckitoRule = MockitoJUnit.rule();
 
@@ -42,9 +46,14 @@ public class GalleryBeanTest {
     @InjectMocks
     public GalleryBean galleryBean;
 
+    @BeforeClass
+    public static void initClass() {
+    	FacesContextMocker.mockFacesContext();    	
+    }
+
     @Before
     public void init() {
-    	when(servletContext.getRealPath(Mockito.any())).thenReturn(".");
+    	when(servletContext.getRealPath(Mockito.any())).thenReturn(PATH);
     	when(externalContext.getContext()).thenReturn(servletContext);
     }
 
@@ -52,7 +61,7 @@ public class GalleryBeanTest {
     public void testeGetPhotoPath() {
     	Path photoPath = galleryBean.getPhotoPath(externalContext);
     	LOGGER.info("photoPath={}", photoPath);
-    	assertThat(photoPath, equalTo("."));
+    	assertThat(photoPath, equalTo(Path.of(PATH)));
     }
 
 }
