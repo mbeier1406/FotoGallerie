@@ -6,9 +6,6 @@ import static org.mockito.Mockito.when;
 
 import java.nio.file.Path;
 
-import javax.faces.context.ExternalContext;
-import javax.servlet.ServletContext;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.Before;
@@ -21,6 +18,9 @@ import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
+
+import jakarta.faces.context.ExternalContext;
+import jakarta.servlet.ServletContext;
 
 /**
  * Tests für die Klasse {@linkplain GalleryBean}.

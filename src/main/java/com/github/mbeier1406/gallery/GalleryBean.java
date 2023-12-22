@@ -15,17 +15,17 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.faces.application.FacesMessage;
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ViewScoped;
-import javax.faces.context.ExternalContext;
-import javax.faces.context.FacesContext;
-import javax.servlet.ServletContext;
-
 import org.apache.logging.log4j.CloseableThreadContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.primefaces.event.FileUploadEvent;
+
+import jakarta.faces.application.FacesMessage;
+import jakarta.faces.context.ExternalContext;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.view.ViewScoped;
+import jakarta.inject.Named;
+import jakarta.servlet.ServletContext;
 
 /**
  * Die Bean der Anwendung speichert eine Liste der vorhandenen Photos, liest
@@ -35,7 +35,7 @@ import org.primefaces.event.FileUploadEvent;
  * jedem Update gelöscht (keine Persistierung).
  * @author mbeier
  */
-@ManagedBean
+@Named
 @ViewScoped
 public class GalleryBean implements Serializable {  
 
@@ -85,7 +85,7 @@ public class GalleryBean implements Serializable {
             String fn = event.getFile().getFileName();
             try ( CloseableThreadContext.Instance ctx = put("path", path.toString()).put("fn", fn);
             	  FileOutputStream fileOutputStream = new FileOutputStream(path.toString() + File.separator + fn);
-            	  InputStream inputStream = event.getFile().getInputstream() ) {
+            	  InputStream inputStream = event.getFile().getInputStream() ) {
                 byte[] buffer = new byte[6124];
                 int bulk;
                 while (true) {
