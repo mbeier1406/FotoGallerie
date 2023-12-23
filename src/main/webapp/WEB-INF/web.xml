@@ -9,17 +9,20 @@
         <param-name>primefaces.THEME</param-name>
         <param-value>sunny</param-value>
     </context-param>
-    <context-param>
-        <param-name>primefaces.UPLOADER</param-name>
-        <param-value>commons</param-value>
-    </context-param>
+
+	<servlet>
+		<servlet-name>jakarta.ws.rs.core.Application</servlet-name>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>jakarta.ws.rs.core.Application</servlet-name>
+		<url-pattern>/rest/*</url-pattern>
+	</servlet-mapping>
 
     <servlet>
         <servlet-name>Faces Servlet</servlet-name>
         <servlet-class>jakarta.faces.webapp.FacesServlet</servlet-class>
         <load-on-startup>1</load-on-startup>
     </servlet>
-
     <servlet-mapping>
         <servlet-name>Faces Servlet</servlet-name>
         <url-pattern>*.xhtml</url-pattern>
@@ -28,14 +31,21 @@
         <session-timeout>30</session-timeout>
     </session-config>
 
-	<filter>
-		<filter-name>PrimeFaces FileUpload Filter</filter-name>
-		<filter-class>org.primefaces.webapp.filter.FileUploadFilter</filter-class>
-	</filter>
-	<filter-mapping>
-		<filter-name>PrimeFaces FileUpload Filter</filter-name>
-		<servlet-name>Faces Servlet</servlet-name>
-	</filter-mapping>
+    <context-param>
+        <param-name>primefaces.UPLOADER</param-name>
+        <param-value>auto</param-value>
+<!--         <param-value>commons</param-value> -->
+    </context-param>
+<!-- 	<filter> -->
+<!-- org.primefaces.webapp.filter.FileUploadFilter lädt org.apache.commons.fileupload.FileItemFactory -->
+<!-- In dem Archiv wird aber Java EE (javax.*) statt Jakarta EE verwendet! -->
+<!-- 		<filter-name>PrimeFaces FileUpload Filter</filter-name> -->
+<!-- 		<filter-class>org.primefaces.webapp.filter.FileUploadFilter</filter-class> -->
+<!-- 	</filter> -->
+<!-- 	<filter-mapping> -->
+<!-- 		<filter-name>PrimeFaces FileUpload Filter</filter-name> -->
+<!-- 		<servlet-name>Faces Servlet</servlet-name> -->
+<!-- 	</filter-mapping> -->
 
     <welcome-file-list>
         <welcome-file>index.xhtml</welcome-file>
