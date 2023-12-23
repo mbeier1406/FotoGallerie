@@ -95,24 +95,35 @@
             <artifactId>primefaces</artifactId>
             <version>13.0.4</version>
             <classifier>jakarta</classifier>
+            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.primefaces.themes</groupId>
             <artifactId>sunny</artifactId>
             <version>1.0.10</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.microprofile.config</groupId>
+            <artifactId>microprofile-config-api</artifactId>
+            <version>3.0.2</version>
+            <scope>compile</scope>
         </dependency>
 		<dependency>
 			<groupId>commons-fileupload</groupId>
 			<artifactId>commons-fileupload</artifactId>
 			<version>1.5</version>
+            <scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-api</artifactId>
+            <scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-core</artifactId>
+            <scope>compile</scope>
 		</dependency>
 	</dependencies>
 
