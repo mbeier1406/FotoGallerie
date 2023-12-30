@@ -12,8 +12,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
-import jakarta.faces.context.ExternalContext;
-import jakarta.faces.context.FacesContext;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.PUT;
@@ -63,9 +61,7 @@ public class GalleryResource {
 		jakarta.ws.rs.core.Response.Status httpStatus;
 		try ( CloseableThreadContext.Instance ctx = CloseableThreadContext.put("photoPath", photoPath) ) {
 			LOGGER.info("Name: {}; Bytes: {}", fileName, fileContent.length);
-			java.nio.file.Path path = Paths.get(galleryBean.getPhotoPath(photoPath).toString(), fileName);
-			LOGGER.info("path={}", path);
-			Files.write(path, fileContent, CREATE_NEW);
+			Files.write(Paths.get(photoPath, fileName), fileContent, CREATE_NEW);
 			httpStatus = OK;
 		}
 		catch ( Exception e ) {
