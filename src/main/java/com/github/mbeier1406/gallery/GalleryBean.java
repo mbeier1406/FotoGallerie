@@ -42,7 +42,7 @@ public class GalleryBean implements Serializable {
     public static final Logger LOGGER = LogManager.getLogger(GalleryBean.class);
 
 	private static final long serialVersionUID = 3893732715971441682L;
-	private List<Photo> listOfPhotos = new ArrayList<>();
+	private static List<Photo> listOfPhotos = new ArrayList<>();
 
 	/**
      * Liest die im Deployment vorhandenen Photos in {@linkplain #listOfPhotos} ein.
@@ -50,7 +50,7 @@ public class GalleryBean implements Serializable {
      * @see #getPhotoPath(ExternalContext)
      */
     public GalleryBean() throws IOException {      
-
+    	listOfPhotos.clear();
         Path path = getPhotoPath(FacesContext.getCurrentInstance().getExternalContext());
         try ( CloseableThreadContext.Instance ctx = put("path", path.toString());
         	  DirectoryStream<Path> ds = Files.newDirectoryStream(path) ) {
@@ -96,8 +96,8 @@ public class GalleryBean implements Serializable {
                     fileOutputStream.write(buffer, 0, bulk);
                     fileOutputStream.flush();
                 }
-                Photo new_photo = new Photo(fn, false);
-                listOfPhotos.add(new_photo);
+                Photo newPhoto = new Photo(fn, false);
+                listOfPhotos.add(newPhoto);
                 facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Dateien hochgeladen!", null));
             } catch (FileNotFoundException ex) {
                 facesContext.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "File " + event.getFile().getFileName() + " nicht gefunden!", null));
@@ -121,6 +121,14 @@ public class GalleryBean implements Serializable {
         return Paths.get(
         		((ServletContext) externalContext.getContext())
                 .getRealPath(File.separator + "resources" + File.separator + "photos" + File.separator));
-
     }
+
+    /**
+     * Fügt der Liste der Fotos ein neues hinzu.
+     * @param newPhoto das neue Foto
+     */
+    public static void addPhoto(final Photo newPhoto) {
+    	listOfPhotos.add(newPhoto);
+    }
+
 }
